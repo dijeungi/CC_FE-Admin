@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [openAlert, setOpenAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -27,10 +27,10 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await loginPost(email, password);
+      const result = await loginPost(id, password);
       dispatch(
         login({
-          email: result.email,
+          id: result.id,
           roles: result.roles,
           accessToken: result.accessToken,
         }),
@@ -39,7 +39,7 @@ const LoginPage = () => {
       setIsSuccess(true);
       setAlertMessage('로그인이 성공하였습니다');
       setOpenAlert(true);
-      setEmail('');
+      setId('');
       setPassword('');
     } catch (error) {
       setIsSuccess(false);
@@ -88,13 +88,13 @@ const LoginPage = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="이메일 주소"
-                name="email"
-                autoComplete="email"
+                id="id"
+                label="계정"
+                name="id"
+                autoComplete="id"
                 autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={id}
+                onChange={(e) => setId(e.target.value)}
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     '&:hover fieldset': {

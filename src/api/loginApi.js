@@ -5,10 +5,10 @@ import { API_SERVER_HOST } from '../config/apiConfig';
 const host = `${API_SERVER_HOST}/api/admin/member`;
 
 // 로그인
-export const loginPost = async (email, password) => {
+export const loginPost = async (id, password) => {
   const response = await axios.post(
     `${host}/login`,
-    { email, password },
+    { id, password },
     {
       withCredentials: true,
     },

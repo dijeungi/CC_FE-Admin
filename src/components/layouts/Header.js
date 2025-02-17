@@ -20,7 +20,7 @@ import AlertModal from '../common/AlertModal';
 import { logout } from '../../slices/loginSlice';
 
 const Header = () => {
-  const { email } = useSelector((state) => state.loginSlice);
+  const { id } = useSelector((state) => state.loginSlice);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ const Header = () => {
   };
 
   const checkLoginAndNavigate = (path) => {
-    if (!email) {
+    if (!id) {
       setAlertMessage('로그인을 해주세요!');
       setOpenAlert(true);
       return false;
@@ -86,9 +86,9 @@ const Header = () => {
       onClick: () => checkLoginAndNavigate('/order'),
     },
     {
-      text: email ? '로그아웃' : '로그인',
+      text: id ? '로그아웃' : '로그인',
       path: '/login',
-      onClick: email ? handleLogout : () => navigate('/login'),
+      onClick: id ? handleLogout : () => navigate('/login'),
     },
   ];
 
@@ -106,7 +106,7 @@ const Header = () => {
 
   const handleCloseAlert = () => {
     setOpenAlert(false);
-    if (!email) {
+    if (!id) {
       navigate('/login');
     }
   };

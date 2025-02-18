@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 // /api/admin/product/list
 export const getList = async (pageParam) => {
   const { page, size, sort, name, categoryId } = pageParam;
-  const response = await axiosInstance.get(`/product/list`, {
+  const response = await axiosInstance.get(`festival/list/product`, {
     params: {
       page: page,
       size: size,

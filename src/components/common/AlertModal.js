@@ -40,6 +40,19 @@ const AlertModal = ({
         <Typography color="#2A0934">{message}</Typography>
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
+        {/* <Button
+          onClick={onClose}
+          sx={{
+            bgcolor: '#E0E0E0',
+            color: '#2A0934',
+            fontWeight: 'bold',
+            '&:hover': {
+              bgcolor: '#D6D6D6',
+            },
+          }}
+        >
+          취소
+        </Button> */}
         <Button
           onClick={onConfirm || onClose}
           sx={{

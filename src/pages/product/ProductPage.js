@@ -70,10 +70,10 @@ const ProductPage = () => {
 
     try {
       const response = await getList(params);
-      setProducts(response.dtoList || []);
+      setProducts(response || []);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
-      console.error('상품 목록 로딩 실패:', error);
+      console.error('공연 목록 로딩 실패:', error);
     }
   };
 
@@ -97,7 +97,7 @@ const ProductPage = () => {
       setDeleteModalOpen(false);
       fetchProducts(); // 목록 새로고침
     } catch (error) {
-      console.error('상품 삭제 실패:', error);
+      console.error('공연 삭제 실패:', error);
     }
   };
 
@@ -133,7 +133,7 @@ const ProductPage = () => {
   const handleDownload = async () => {
     console.log('handleDownload selectedProducts:', selectedProducts);
     if (selectedProducts.length === 0) {
-      setAlertMessage('상품 체크를 먼저 해주셔야 합니다!');
+      setAlertMessage('공연 체크를 먼저 해주셔야 합니다!');
       setShowAlert(true);
       return;
     }
@@ -190,7 +190,7 @@ const ProductPage = () => {
                 variant="h4"
                 sx={{ color: '#2A0934', fontWeight: 'bold' }}
               >
-                상품 관리
+                공연 관리
               </Typography>
             </Grid>
             <Grid item>
@@ -204,7 +204,7 @@ const ProductPage = () => {
                 }}
                 onClick={() => navigate('/product/register')}
               >
-                상품 등록
+                공연 등록
               </Button>
               <Button
                 variant="contained"
@@ -241,7 +241,7 @@ const ProductPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="상품명 검색"
+                  placeholder="공연명 검색"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
@@ -279,7 +279,22 @@ const ProductPage = () => {
                   카테고리
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  상품명
+                  공연명
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  지역
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  시작일
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  종료일
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  공연상태
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  할인율
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   가격
@@ -288,16 +303,22 @@ const ProductPage = () => {
                   할인가격
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  재고
+                  상영시간
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  연령가
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  MD PICK
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  수상작유무
+                </TableCell>
+                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                  인기순위
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   이미지
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  등록일
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  수정일
                 </TableCell>
                 <TableCell
                   align="center"
@@ -308,7 +329,7 @@ const ProductPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <TableRow key={product.id} hover>
                   <TableCell>
                     <Checkbox
@@ -316,51 +337,24 @@ const ProductPage = () => {
                       onChange={() => handleSelectProduct(product.id)}
                     />
                   </TableCell>
-                  <TableCell>{product.id}</TableCell>
-                  <TableCell>{product.categoryName}</TableCell>
-                  <TableCell
-                    sx={{
-                      maxWidth: '200px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        textDecoration: 'underline',
-                        color: '#FFB7F2',
-                      },
-                    }}
-                    // onClick={() =>
-                    //   window.open(
-                    //     `${FRONT_USER_HOST}/product/${product.id}`,
-                    //     '_blank',
-                    //   )
-                    // }
-                  >
-                    {product.name}
-                  </TableCell>
-                  <TableCell>{product.price?.toLocaleString()}원</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{product.categoryId}</TableCell>
+                  <TableCell>{product.festivalName}</TableCell>
+                  <TableCell>{product.placeName}</TableCell>
+                  <TableCell>{product.fromDate}</TableCell>
+                  <TableCell>{product.toDate}</TableCell>
+                  <TableCell>{product.festivalState}</TableCell>
+                  <TableCell>{product.salePercent.toLocaleString()}%</TableCell>
                   <TableCell>
-                    {product.discountPrice?.toLocaleString()}원
+                    {product.festivalPrice?.toLocaleString()}원
                   </TableCell>
-                  <TableCell>{product.stockNumber}</TableCell>
-                  <TableCell>
-                    {product.uploadFileNames && product.uploadFileNames[0] && (
-                      <Box
-                        component="img"
-                        src={`${API_SERVER_HOST}/api/admin/product/view/${product.uploadFileNames[0]}`}
-                        alt={product.name}
-                        sx={{
-                          width: 50,
-                          height: 50,
-                          objectFit: 'cover',
-                          borderRadius: 1,
-                        }}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell>{product.createdAt}</TableCell>
-                  <TableCell>{product.modifiedAt}</TableCell>
+                  <TableCell>{product.salePrice?.toLocaleString()}원</TableCell>
+                  <TableCell>{product.runningTime}</TableCell>
+                  <TableCell>{product.age}</TableCell>
+                  <TableCell>{product.mdPick}</TableCell>
+                  <TableCell>{product.premier}</TableCell>
+                  <TableCell>{product.ranking}</TableCell>
+                  <TableCell>{product.postImage}</TableCell>
                   <TableCell align="center">
                     <IconButton size="small" sx={{ color: '#FFB7F2' }}>
                       <EditIcon />
@@ -388,7 +382,7 @@ const ProductPage = () => {
       <AlertModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="상품 삭제"
+        title="공연 삭제"
         message="정말 삭제하시겠습니까?"
         isSuccess={false}
         onConfirm={handleDeleteConfirm}

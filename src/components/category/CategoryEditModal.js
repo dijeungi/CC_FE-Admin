@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -26,21 +26,26 @@ const style = {
   p: 4,
 };
 
-const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
+const CategoryModal = ({ open, handleClose, title, category, onSubmit }) => {
   const [name, setName] = useState('');
-  const [codeId, setCodeId] = useState('CT');
   const [useYn, setUseYn] = useState('Y');
+
+  useEffect(() => {
+    if (open) {
+      setName(category.name);
+      setUseYn(category.useYn);
+    }
+  }, [open, category]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
+    formData.append('id', category.id);
     formData.append('name', name);
-    formData.append('id', codeId);
     formData.append('useYn', useYn);
 
     await onSubmit(formData);
     setName('');
-    setCodeId('CT');
     setUseYn('Y');
     handleClose();
   };
@@ -71,18 +76,6 @@ const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
               required
             />
             <FormControl fullWidth required>
-              <InputLabel>코드ID</InputLabel>
-              <Select
-                value={codeId}
-                onChange={(e) => setCodeId(e.target.value)}
-                label="코드ID"
-              >
-                <MenuItem value="CT">CT (장르)</MenuItem>
-                <MenuItem value="HD">HD (요일)</MenuItem>
-                <MenuItem value="PL">PL (지역)</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth required>
               <InputLabel>사용유무</InputLabel>
               <Select
                 value={useYn}
@@ -98,7 +91,7 @@ const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
               variant="contained"
               sx={{ bgcolor: '#FFB7F2', '&:hover': { bgcolor: '#ff99e6' } }}
             >
-              등록
+              수정
             </Button>
           </Stack>
         </form>

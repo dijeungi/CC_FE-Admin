@@ -26,22 +26,29 @@ const style = {
   p: 4,
 };
 
-const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
-  const [name, setName] = useState('');
-  const [codeId, setCodeId] = useState('CT');
-  const [useYn, setUseYn] = useState('Y');
+// 공연명 리스트 (API 연동 가능)
+const performanceList = [
+  { id: 1, name: '오페라의 유령' },
+  { id: 2, name: '레미제라블' },
+  { id: 3, name: '캣츠' },
+];
+
+const ContentModal = ({ open, handleClose, title, onSubmit }) => {
+  const [performanceName, setPerformanceName] = useState('');
+  const [role, setRole] = useState('');
+  const [actorName, setActorName] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('id', codeId);
-    formData.append('useYn', useYn);
-
+    const formData = {
+      performanceName,
+      role,
+      actorName,
+    };
     await onSubmit(formData);
-    setName('');
-    setCodeId('CT');
-    setUseYn('Y');
+    setPerformanceName('');
+    setRole('');
+    setActorName('');
     handleClose();
   };
 
@@ -63,36 +70,36 @@ const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
         </Box>
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
+            {/* 공연명 선택 드롭다운 */}
+            <FormControl fullWidth required>
+              <InputLabel>공연명</InputLabel>
+              <Select
+                value={performanceName}
+                onChange={(e) => setPerformanceName(e.target.value)}
+                label="공연명"
+              >
+                {performanceList.map((performance) => (
+                  <MenuItem key={performance.id} value={performance.name}>
+                    {performance.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
             <TextField
               fullWidth
-              label="코드명"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              label="배역"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               required
             />
-            <FormControl fullWidth required>
-              <InputLabel>코드ID</InputLabel>
-              <Select
-                value={codeId}
-                onChange={(e) => setCodeId(e.target.value)}
-                label="코드ID"
-              >
-                <MenuItem value="CT">CT (장르)</MenuItem>
-                <MenuItem value="HD">HD (요일)</MenuItem>
-                <MenuItem value="PL">PL (지역)</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth required>
-              <InputLabel>사용유무</InputLabel>
-              <Select
-                value={useYn}
-                onChange={(e) => setUseYn(e.target.value)}
-                label="사용유무"
-              >
-                <MenuItem value="Y">Y (사용)</MenuItem>
-                <MenuItem value="N">N (미사용)</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField
+              fullWidth
+              label="성명"
+              value={actorName}
+              onChange={(e) => setActorName(e.target.value)}
+              required
+            />
             <Button
               type="submit"
               variant="contained"
@@ -107,4 +114,4 @@ const CategoryModal = ({ open, handleClose, title, onSubmit }) => {
   );
 };
 
-export default CategoryModal;
+export default ContentModal;

@@ -30,6 +30,7 @@ import Header from '../components/layouts/Header';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { registerContentExcel } from '../api/excelApi';
 import UploadModal from '../components/common/UploadModal';
+import ContentModal from '../components/content/ContentModel';
 
 const initState = {
   dtoList: [], // 콘텐츠 목록
@@ -52,6 +53,7 @@ const ContentPage = () => {
   const [selectedContent, setSelectedContent] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showContentModal, setShowContentModal] = useState(false);
 
   const fetchContents = async () => {
     const params = {
@@ -96,6 +98,17 @@ const ContentPage = () => {
     }
   };
 
+  const handleContentSubmit = async (newContent) => {
+    try {
+      console.log('배우 등록 데이터:', newContent);
+      // 여기에 API 연동 로직 추가
+      setShowContentModal(false);
+      fetchContents();
+    } catch (error) {
+      console.error('배우 등록 실패:', error);
+    }
+  };
+
   const handleFileUpload = async (file) => {
     try {
       await registerContentExcel(file);
@@ -118,7 +131,7 @@ const ContentPage = () => {
                 variant="h4"
                 sx={{ color: '#2A0934', fontWeight: 'bold' }}
               >
-                콘텐츠 관리
+                배우 관리
               </Typography>
             </Grid>
             <Grid item>
@@ -130,8 +143,9 @@ const ContentPage = () => {
                   '&:hover': { backgroundColor: '#ff9ee8' },
                   mr: 1,
                 }}
+                onClick={() => setShowContentModal(true)}
               >
-                콘텐츠 등록
+                배우 등록
               </Button>
               <Button
                 variant="contained"
@@ -155,7 +169,7 @@ const ContentPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="콘텐츠명 검색"
+                  placeholder="배우명 검색"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
@@ -180,19 +194,13 @@ const ContentPage = () => {
                   ID
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  카테고리
+                  공연명
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  콘텐츠명
+                  배역
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  이미지
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  등록일
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  수정일
+                  성명
                 </TableCell>
                 <TableCell
                   align="center"
@@ -265,6 +273,13 @@ const ContentPage = () => {
         isSuccess={true}
         onConfirm={() => setUploadModalOpen(false)}
       />
+      <ContentModal
+        open={showContentModal}
+        handleClose={() => setShowContentModal(false)}
+        title="배우 등록"
+        onSubmit={handleContentSubmit}
+      />
+
       <UploadModal
         open={showUploadModal}
         onClose={() => setShowUploadModal(false)}

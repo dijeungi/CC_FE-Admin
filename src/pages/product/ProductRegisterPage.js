@@ -18,30 +18,45 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertModal from '../../components/common/AlertModal';
-import { getProductCategoryList } from '../../api/categoryApi';
+import {
+  getCommonCategoryList,
+  getProductCategoryList,
+} from '../../api/categoryApi';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const ProductRegisterPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    discountPrice: '',
+    festivalName: '',
+    runningTime: '',
+    age: '',
+    fromDate: Date.now(),
+    toDate: Date.now(),
+    festivalPrice: '',
+    salePercent: '',
+    mdPick: '',
+    premier: '',
     categoryId: '',
-    stockNumber: '',
+    placeName: '',
   });
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [categories, setCategories] = useState([]);
+  const [placeCategories, setPlaceCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoryList = await getProductCategoryList();
+        const categoryList = await getCommonCategoryList('CT');
+        const placeList = await getCommonCategoryList('PL');
         setCategories(categoryList);
+        setPlaceCategories(placeList);
       } catch (error) {
         console.error('카테고리 목록을 불러오는데 실패했습니다:', error);
       }
@@ -49,12 +64,25 @@ const ProductRegisterPage = () => {
     fetchCategories();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleInputChange = (event) => {
+    if (!event) return; // 방어 코드
+
+    console.log('event.target: ' + event.target);
+
+    if (event.target) {
+      const { name, value } = event.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      // DatePicker에서 온 값 처리
+      const { field, value } = event;
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
   };
 
   const handleFileChange = (e) => {
@@ -93,10 +121,10 @@ const ProductRegisterPage = () => {
 
     try {
       await register(productData);
-      setAlertMessage('상품이 성공적으로 등록되었습니다!');
+      setAlertMessage('공연이 성공적으로 등록되었습니다!');
       setShowAlert(true);
     } catch (error) {
-      setAlertMessage('상품 등록에 실패했습니다.');
+      setAlertMessage('공연 등록에 실패했습니다.');
       setShowAlert(true);
     }
   };
@@ -129,34 +157,20 @@ const ProductRegisterPage = () => {
               variant="h4"
               sx={{ color: '#2A0934', fontWeight: 'bold' }}
             >
-              상품 등록
+              공연 등록
             </Typography>
           </Box>
 
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="상품명"
-                  name="name"
-                  value={formData.name}
+                  label="공연명"
+                  name="festivalName"
+                  value={formData.festivalName}
                   onChange={handleInputChange}
                   required
-                  variant="outlined"
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="상품 설명"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  required
-                  multiline
-                  rows={4}
                   variant="outlined"
                 />
               </Grid>
@@ -164,10 +178,66 @@ const ProductRegisterPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="가격"
-                  name="price"
+                  label="상영시간"
+                  name="runningTime"
+                  value={formData.runningTime}
+                  onChange={handleInputChange}
+                  required
+                  variant="outlined"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="연령가"
+                  name="age"
                   type="number"
-                  value={formData.price}
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        세 이상 관람가
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="시작일"
+                    value={formData.fromDate}
+                    onChange={(value) => handleInputChange('fromDate', value)}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="종료일"
+                    value={formData.toDate}
+                    onChange={(value) => handleInputChange('toDate', value)}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="가격"
+                  name="festivalPrice"
+                  type="number"
+                  value={formData.festivalPrice}
                   onChange={handleInputChange}
                   required
                   InputProps={{
@@ -182,14 +252,14 @@ const ProductRegisterPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="할인 가격"
-                  name="discountPrice"
+                  label="할인율"
+                  name="salePercent"
                   type="number"
-                  value={formData.discountPrice}
+                  value={formData.salePercent}
                   onChange={handleInputChange}
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">원</InputAdornment>
+                      <InputAdornment position="end">%</InputAdornment>
                     ),
                   }}
                   variant="outlined"
@@ -198,11 +268,43 @@ const ProductRegisterPage = () => {
 
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
+                  <InputLabel id="mdPick-label">MD PICK</InputLabel>
+                  <Select
+                    labelId="mdPick-label"
+                    name="mdPick"
+                    value={formData.mdPick}
+                    onChange={handleInputChange}
+                    label="MD PICK"
+                  >
+                    <MenuItem value="Y">Y</MenuItem>
+                    <MenuItem value="N">N</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth required>
+                  <InputLabel id="premier-label">수상작 유무</InputLabel>
+                  <Select
+                    labelId="premier-label"
+                    name="premier"
+                    value={formData.premier}
+                    onChange={handleInputChange}
+                    label="수상작 유무"
+                  >
+                    <MenuItem value="Y">Y</MenuItem>
+                    <MenuItem value="N">N</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth required>
                   <InputLabel id="category-label">카테고리</InputLabel>
                   <Select
                     labelId="category-label"
                     name="categoryId"
-                    value={formData.categoryId}
+                    value={formData.categoryId || ''}
                     onChange={handleInputChange}
                     label="카테고리"
                   >
@@ -219,16 +321,25 @@ const ProductRegisterPage = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="재고 수량"
-                  name="stockNumber"
-                  type="number"
-                  value={formData.stockNumber}
-                  onChange={handleInputChange}
-                  required
-                  variant="outlined"
-                />
+                <FormControl fullWidth required>
+                  <InputLabel id="place-label">지역</InputLabel>
+                  <Select
+                    labelId="place-label"
+                    name="placeName"
+                    value={formData.placeName || ''}
+                    onChange={handleInputChange}
+                    label="지역"
+                  >
+                    {placeCategories.map((category) => (
+                      <MenuItem
+                        key={category.categoryId}
+                        value={category.categoryId}
+                      >
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item xs={15}>
@@ -290,7 +401,7 @@ const ProductRegisterPage = () => {
                     height: 48,
                   }}
                 >
-                  상품 등록하기
+                  공연 등록하기
                 </Button>
               </Grid>
             </Grid>

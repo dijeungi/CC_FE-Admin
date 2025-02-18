@@ -61,17 +61,17 @@ const Header = () => {
       onClick: () => checkLoginAndNavigate('/'),
     },
     {
-      text: '카테고리',
+      text: '공통코드',
       path: '/category',
       onClick: () => checkLoginAndNavigate('/category'),
     },
     {
-      text: '상품',
+      text: '공연',
       path: '/product',
       onClick: () => checkLoginAndNavigate('/product'),
     },
     {
-      text: '콘텐츠',
+      text: '배우',
       path: '/content',
       onClick: () => checkLoginAndNavigate('/content'),
     },
@@ -79,11 +79,6 @@ const Header = () => {
       text: '회원',
       path: '/member',
       onClick: () => checkLoginAndNavigate('/member'),
-    },
-    {
-      text: '주문',
-      path: '/order',
-      onClick: () => checkLoginAndNavigate('/order'),
     },
     {
       text: id ? '로그아웃' : '로그인',
@@ -137,7 +132,7 @@ const Header = () => {
               },
             }}
           >
-            FriendZoo 쇼핑몰 관리페이지
+            CampusConcert 관리페이지
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {menuItems.map((item) => (

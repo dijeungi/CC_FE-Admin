@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getList = async (pageParam) => {
   const { page, size, sort, name, divisionId } = pageParam;
-  const response = await axiosInstance.get(`/content/list`, {
+  const response = await axiosInstance.get(`/festival/list`, {
     params: {
       page: page,
       size: size,
@@ -15,6 +15,11 @@ export const getList = async (pageParam) => {
   return response.data;
 };
 
+export const getFestivalId = async () => {
+  const response = await axiosInstance.get(`/festival/id`);
+  return response.data;
+};
+
 export const getOne = async (contentId) => {
   const response = await axiosInstance.get(`/content/${contentId}`);
   return response.data;
@@ -23,11 +28,22 @@ export const getOne = async (contentId) => {
 export const register = async (content) => {
   const header = {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'application/json',
     },
   };
-  const response = await axiosInstance.post(`/content`, content, header);
-  return response.data;
+
+  try {
+    const response = await axiosInstance.post(`/festival/add`, content, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('배우 등록 실패:', error);
+    throw error;
+  }
 };
 
 export const modify = async (contentId, content) => {
@@ -45,6 +61,8 @@ export const modify = async (contentId, content) => {
 };
 
 export const remove = async (contentId) => {
-  const response = await axiosInstance.delete(`/content/${contentId}`);
+  const response = await axiosInstance.delete(
+    `/festival/delete?actorId=${contentId}`,
+  );
   return response.data;
 };

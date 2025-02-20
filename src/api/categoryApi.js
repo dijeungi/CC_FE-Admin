@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // list
 export const getProductCategoryList = async () => {
-  const response = await axiosInstance.get(`/festival/list/common`);
+  const response = await axiosInstance.get(`/common/list`);
   return response.data;
 };
 
@@ -22,11 +22,7 @@ export const registerProductCategory = async (data) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  const response = await axiosInstance.post(
-    `/festival/add/common`,
-    data,
-    header,
-  );
+  const response = await axiosInstance.post(`/common/add`, data, header);
   return response.data;
 };
 
@@ -36,18 +32,12 @@ export const editProductCategory = async (data) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  const response = await axiosInstance.put(
-    `/festival/edit/common`,
-    data,
-    header,
-  );
+  const response = await axiosInstance.put(`/common/edit`, data, header);
   return response.data;
 };
 
 // remove
 export const removeProductCategory = async (id) => {
-  const response = await axiosInstance.delete(
-    `/festival/delete/common?commonId=${id}`,
-  );
+  const response = await axiosInstance.delete(`/common/delete?commonId=${id}`);
   return response.data;
 };

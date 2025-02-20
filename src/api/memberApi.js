@@ -13,3 +13,10 @@ export const getList = async (pageParam) => {
   });
   return response.data;
 };
+
+export const remove = async (memberId) => {
+  const response = await axiosInstance.delete(
+    `/member/delete?memberId=${memberId}`,
+  );
+  return response.data;
+};

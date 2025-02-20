@@ -21,7 +21,6 @@ import {
   IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../../components/common/PageComponent';
@@ -317,9 +316,9 @@ const ProductPage = () => {
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   인기순위
                 </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                {/* <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   이미지
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   align="center"
                   sx={{ fontWeight: 'bold', color: '#2A0934' }}
@@ -343,7 +342,7 @@ const ProductPage = () => {
                   <TableCell>{product.placeName}</TableCell>
                   <TableCell>{product.fromDate}</TableCell>
                   <TableCell>{product.toDate}</TableCell>
-                  <TableCell>{product.festivalState}</TableCell>
+                  <TableCell>{product.festivalStateName}</TableCell>
                   <TableCell>{product.salePercent.toLocaleString()}%</TableCell>
                   <TableCell>
                     {product.festivalPrice?.toLocaleString()}원
@@ -354,11 +353,8 @@ const ProductPage = () => {
                   <TableCell>{product.mdPick}</TableCell>
                   <TableCell>{product.premier}</TableCell>
                   <TableCell>{product.ranking}</TableCell>
-                  <TableCell>{product.postImage}</TableCell>
+                  {/* <TableCell>{product.postImage}</TableCell> */}
                   <TableCell align="center">
-                    <IconButton size="small" sx={{ color: '#FFB7F2' }}>
-                      <EditIcon />
-                    </IconButton>
                     <IconButton
                       size="small"
                       sx={{ color: '#ff8484' }}
@@ -379,6 +375,7 @@ const ProductPage = () => {
           handlePageChange={handlePageChange}
         />
       </Container>
+
       <AlertModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

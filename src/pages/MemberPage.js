@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/layouts/Header';
-import { getList } from '../api/memberApi';
+import { getList, remove } from '../api/memberApi';
 import {
   Container,
   Grid,
@@ -8,7 +8,6 @@ import {
   CardContent,
   Typography,
   TextField,
-  Button,
   Box,
   Table,
   TableBody,
@@ -19,11 +18,8 @@ import {
   Paper,
   IconButton,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-
 import AlertModal from '../components/common/AlertModal';
 import PageComponent from '../components/common/PageComponent';
 
@@ -58,6 +54,7 @@ const MemberPage = () => {
 
     try {
       const response = await getList(params);
+      console.log(response.dtoList);
       setMembers(response.dtoList || []);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
@@ -68,6 +65,22 @@ const MemberPage = () => {
   useEffect(() => {
     fetchMembers();
   }, [page]);
+
+  const handleDeleteClick = (member) => {
+    console.log('handleDeleteClick member', member);
+    setSelectedMember(member);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      await remove(selectedMember.id);
+      setDeleteModalOpen(false);
+      fetchMembers(); // 목록 새로고침
+    } catch (error) {
+      console.error('회원 삭제 실패:', error);
+    }
+  };
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
@@ -87,7 +100,7 @@ const MemberPage = () => {
                 회원 관리
               </Typography>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -98,7 +111,7 @@ const MemberPage = () => {
               >
                 회원 등록
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
 
@@ -166,11 +179,12 @@ const MemberPage = () => {
                   <TableCell>{member.createdAt}</TableCell>
                   <TableCell>{member.modifiedAt}</TableCell>
                   <TableCell align="center">
-                    <IconButton size="small" sx={{ color: '#FFB7F2' }}>
-                      <EditIcon />
-                    </IconButton>
                     <IconButton>
-                      <DeleteIcon />
+                      <DeleteIcon
+                        size="small"
+                        sx={{ color: '#ff8484' }}
+                        onClick={() => handleDeleteClick(member)}
+                      />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -178,6 +192,15 @@ const MemberPage = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <AlertModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          title="회원 삭제"
+          message="정말 삭제하시겠습니까?"
+          isSuccess={false}
+          onConfirm={handleDeleteConfirm}
+        />
 
         <PageComponent
           page={page}

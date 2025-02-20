@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -13,6 +13,8 @@ import {
   InputLabel,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { getFestivalId } from '../../api/contentApi';
+import { register } from '../../api/contentApi';
 
 const style = {
   position: 'absolute',
@@ -26,30 +28,44 @@ const style = {
   p: 4,
 };
 
-// 공연명 리스트 (API 연동 가능)
-const performanceList = [
-  { id: 1, name: '오페라의 유령' },
-  { id: 2, name: '레미제라블' },
-  { id: 3, name: '캣츠' },
-];
-
 const ContentModal = ({ open, handleClose, title, onSubmit }) => {
-  const [performanceName, setPerformanceName] = useState('');
-  const [role, setRole] = useState('');
+  const [festivalId, setFestivalId] = useState('');
+  const [actorCharacter, setActorCharacter] = useState('');
   const [actorName, setActorName] = useState('');
+  const [festivalIds, setFestivalIds] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const idList = await getFestivalId();
+        setFestivalIds(idList);
+      } catch (error) {
+        console.error('카테고리 목록을 불러오는데 실패했습니다:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      performanceName,
-      role,
-      actorName,
+      festivalId: festivalId,
+      actorCharacter: actorCharacter,
+      actorName: actorName,
     };
-    await onSubmit(formData);
-    setPerformanceName('');
-    setRole('');
-    setActorName('');
-    handleClose();
+    // await onSubmit(formData);
+    try {
+      console.log('📌 등록할 배우 데이터:', formData);
+      await register(formData);
+
+      alert('배우가 성공적으로 등록되었습니다!');
+      setFestivalId('');
+      setActorCharacter('');
+      setActorName('');
+      handleClose();
+    } catch (error) {
+      console.error('배우 등록 실패:', error);
+    }
   };
 
   return (
@@ -74,13 +90,13 @@ const ContentModal = ({ open, handleClose, title, onSubmit }) => {
             <FormControl fullWidth required>
               <InputLabel>공연명</InputLabel>
               <Select
-                value={performanceName}
-                onChange={(e) => setPerformanceName(e.target.value)}
+                value={festivalId}
+                onChange={(e) => setFestivalId(e.target.value)}
                 label="공연명"
               >
-                {performanceList.map((performance) => (
-                  <MenuItem key={performance.id} value={performance.name}>
-                    {performance.name}
+                {festivalIds.map((festival, index) => (
+                  <MenuItem key={index} value={festival.festivalId}>
+                    {festival.festivalName}
                   </MenuItem>
                 ))}
               </Select>
@@ -89,8 +105,8 @@ const ContentModal = ({ open, handleClose, title, onSubmit }) => {
             <TextField
               fullWidth
               label="배역"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+              value={actorCharacter}
+              onChange={(e) => setActorCharacter(e.target.value)}
               required
             />
             <TextField

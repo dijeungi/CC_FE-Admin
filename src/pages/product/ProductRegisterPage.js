@@ -18,10 +18,7 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AlertModal from '../../components/common/AlertModal';
-import {
-  getCommonCategoryList,
-  getProductCategoryList,
-} from '../../api/categoryApi';
+import { getCommonCategoryList } from '../../api/categoryApi';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -34,14 +31,15 @@ const ProductRegisterPage = () => {
     festivalName: '',
     runningTime: '',
     age: '',
-    fromDate: Date.now(),
-    toDate: Date.now(),
+    fromDate: new Date(),
+    toDate: new Date(),
     festivalPrice: '',
     salePercent: '',
-    mdPick: '',
-    premier: '',
+    mdPick: 'Y',
+    premier: 'Y',
     categoryId: '',
     placeName: '',
+    postImage: '',
   });
   const [files, setFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
@@ -64,75 +62,91 @@ const ProductRegisterPage = () => {
     fetchCategories();
   }, []);
 
+  const handleAlertClose = () => {
+    setShowAlert(false);
+    setAlertMessage(''); // ✅ 모달이 닫힐 때 메시지를 초기화
+    if (alertMessage.includes('성공')) {
+      navigate('/product'); // ✅ 성공 시 페이지 이동
+    }
+  };
+
   const handleInputChange = (event) => {
-    if (!event) return; // 방어 코드
-
-    console.log('event.target: ' + event.target);
-
-    if (event.target) {
+    if (event && event.target) {
       const { name, value } = event.target;
+
+      console.log(`🔍 변경 감지: ${name} = ${value}`); // 값이 제대로 들어오는지 확인
+
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
-    } else {
-      // DatePicker에서 온 값 처리
-      const { field, value } = event;
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
+
+      console.log('📌 formData 업데이트됨:', formData); // formData 상태 확인
     }
   };
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(selectedFiles);
+  const handleSelectChange = (event) => {
+    const { name, value } = event.target;
 
-    // Create preview URLs
-    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
-    setPreviewUrls(urls);
+    console.log(`🔍 [Select 변경 감지] ${name} = ${value}`); // 값 확인
+
+    setFormData((prev) => {
+      const newState = { ...prev, [name]: value };
+      console.log('✅ 즉시 formData 업데이트 확인:', newState); // 즉시 변경 확인
+      return newState;
+    });
   };
 
-  const checkValidation = () => {
-    if (files.length === 0) {
-      setAlertMessage('최소 1개 이상의 상품 이미지를 등록해주세요.');
-      setShowAlert(true);
-      return false;
-    }
-    return true;
+  const handleDateChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value ? value : null,
+    }));
+    console.log(value);
+    console.log(formData.fromDate);
   };
+
+  // const handleFileChange = (e) => {
+  //   const selectedFile = e.target.files[0]; // ✅ 첫 번째 파일만 가져오기
+
+  //   if (selectedFile) {
+  //     setFiles([selectedFile]); // ✅ 파일 상태를 배열이 아닌 단일 파일로 설정
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       postImage: selectedFile, // ✅ formData에 단일 파일 저장
+  //     }));
+
+  //     // 미리보기 URL 생성 (하나만)
+  //     setPreviewUrls([URL.createObjectURL(selectedFile)]);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!checkValidation()) {
-      return;
-    }
-
     const productData = new FormData();
     Object.keys(formData).forEach((key) => {
+      if (key === 'fromDate' || key === 'toDate') {
+        productData.append(key, formData[key].toISOString().split('T')[0]);
+      }
       productData.append(key, formData[key]);
+      // if (key !== 'postImage') {
+      // }
     });
 
-    files.forEach((file) => {
-      productData.append('files', file);
-    });
+    // if (formData.postImage) {
+    //   productData.append('postImage', formData.postImage);
+    // }
 
     try {
+      console.log('📌 전송될 formData:', [...productData.entries()]);
       await register(productData);
-      setAlertMessage('공연이 성공적으로 등록되었습니다!');
+
+      setAlertMessage('공연이 성공적으로 등록되었습니다!'); // ✅ 성공 메시지
       setShowAlert(true);
     } catch (error) {
       setAlertMessage('공연 등록에 실패했습니다.');
       setShowAlert(true);
-    }
-  };
-
-  const handleAlertClose = () => {
-    setShowAlert(false);
-    if (alertMessage.includes('성공')) {
-      navigate('/product');
     }
   };
 
@@ -174,7 +188,6 @@ const ProductRegisterPage = () => {
                   variant="outlined"
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -186,7 +199,6 @@ const ProductRegisterPage = () => {
                   variant="outlined"
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -205,13 +217,12 @@ const ProductRegisterPage = () => {
                   variant="outlined"
                 />
               </Grid>
-
               <Grid item xs={12} md={3}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="시작일"
                     value={formData.fromDate}
-                    onChange={(value) => handleInputChange('fromDate', value)}
+                    onChange={(value) => handleDateChange('fromDate', value)}
                     renderInput={(params) => (
                       <TextField {...params} fullWidth />
                     )}
@@ -223,14 +234,13 @@ const ProductRegisterPage = () => {
                   <DatePicker
                     label="종료일"
                     value={formData.toDate}
-                    onChange={(value) => handleInputChange('toDate', value)}
+                    onChange={(value) => handleDateChange('toDate', value)}
                     renderInput={(params) => (
                       <TextField {...params} fullWidth />
                     )}
                   />
                 </LocalizationProvider>
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -248,7 +258,6 @@ const ProductRegisterPage = () => {
                   variant="outlined"
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -265,84 +274,107 @@ const ProductRegisterPage = () => {
                   variant="outlined"
                 />
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel id="mdPick-label">MD PICK</InputLabel>
-                  <Select
-                    labelId="mdPick-label"
+                  <InputLabel shrink>MD PICK</InputLabel>
+                  <select
+                    id="mdPick"
                     name="mdPick"
-                    value={formData.mdPick}
-                    onChange={handleInputChange}
-                    label="MD PICK"
+                    value={formData.mdPick || ''}
+                    onChange={handleSelectChange}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      border: '1px solid #ccc',
+                      backgroundColor: '#fff',
+                    }}
                   >
-                    <MenuItem value="Y">Y</MenuItem>
-                    <MenuItem value="N">N</MenuItem>
-                  </Select>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                  </select>
                 </FormControl>
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel id="premier-label">수상작 유무</InputLabel>
-                  <Select
-                    labelId="premier-label"
+                  <InputLabel shrink>수상작 유무</InputLabel>
+                  <Box
+                    component="select"
+                    id="premier"
                     name="premier"
-                    value={formData.premier}
-                    onChange={handleInputChange}
-                    label="수상작 유무"
+                    value={formData.premier || ''}
+                    onChange={handleSelectChange}
+                    sx={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      border: '1px solid #ccc',
+                      backgroundColor: '#fff',
+                      appearance: 'none',
+                    }}
                   >
-                    <MenuItem value="Y">Y</MenuItem>
-                    <MenuItem value="N">N</MenuItem>
-                  </Select>
+                    <option value="Y">Y</option>
+                    <option value="N">N</option>
+                  </Box>
                 </FormControl>
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel id="category-label">카테고리</InputLabel>
-                  <Select
-                    labelId="category-label"
+                  <InputLabel shrink>카테고리</InputLabel>
+                  <Box
+                    component="select"
+                    id="category"
                     name="categoryId"
                     value={formData.categoryId || ''}
                     onChange={handleInputChange}
-                    label="카테고리"
+                    sx={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      border: '1px solid #ccc',
+                      backgroundColor: '#fff',
+                      appearance: 'none',
+                    }}
                   >
-                    {categories.map((category) => (
-                      <MenuItem
-                        key={category.categoryId}
-                        value={category.categoryId}
-                      >
+                    {categories.map((category, index) => (
+                      <option key={index} value={String(category.id)}>
                         {category.name}
-                      </MenuItem>
+                      </option>
                     ))}
-                  </Select>
+                  </Box>
                 </FormControl>
               </Grid>
-
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
-                  <InputLabel id="place-label">지역</InputLabel>
-                  <Select
-                    labelId="place-label"
+                  <InputLabel shrink>지역</InputLabel>
+                  <Box
+                    component="select"
+                    id="place"
                     name="placeName"
                     value={formData.placeName || ''}
                     onChange={handleInputChange}
-                    label="지역"
+                    sx={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '4px',
+                      fontSize: '16px',
+                      border: '1px solid #ccc',
+                      backgroundColor: '#fff',
+                      appearance: 'none',
+                    }}
                   >
-                    {placeCategories.map((category) => (
-                      <MenuItem
-                        key={category.categoryId}
-                        value={category.categoryId}
-                      >
+                    {placeCategories.map((category, index) => (
+                      <option key={index} value={String(category.id)}>
                         {category.name}
-                      </MenuItem>
+                      </option>
                     ))}
-                  </Select>
+                  </Box>
                 </FormControl>
               </Grid>
-
-              <Grid item xs={15}>
+              {/* <Grid item xs={12}>
                 <Button
                   variant="outlined"
                   component="label"
@@ -360,34 +392,30 @@ const ProductRegisterPage = () => {
                   <input
                     type="file"
                     hidden
-                    multiple
                     onChange={handleFileChange}
                     accept="image/*"
                   />
                 </Button>
-              </Grid>
-
-              {previewUrls.length > 0 && (
+              </Grid> */}
+              {/* 이미지 미리보기 (단일 이미지) */}
+              {/* {previewUrls.length > 0 && (
                 <Grid item xs={12}>
                   <Box
-                    sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}
+                    sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
                   >
-                    {previewUrls.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: 'cover',
-                          borderRadius: 8,
-                        }}
-                      />
-                    ))}
+                    <img
+                      src={previewUrls[0]} // ✅ 하나만 표시
+                      alt="Preview"
+                      style={{
+                        width: 200,
+                        height: 200,
+                        objectFit: 'cover',
+                        borderRadius: 8,
+                      }}
+                    />
                   </Box>
                 </Grid>
-              )}
+              )} */}
 
               <Grid item xs={12}>
                 <Button

@@ -9,7 +9,6 @@ import ContentPage from './pages/ContentPage';
 import CategoryPage from './pages/category/CategoryPage';
 import ProductRegisterPage from './pages/product/ProductRegisterPage';
 import ProductDetailPage from './pages/product/ProductDetailPage';
-import ProductModifyPage from './pages/product/ProductModifyPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
@@ -29,11 +28,6 @@ function App() {
         <Route path="/product/register" element={<ProductRegisterPage />} />
         {/* 상품상세 */}
         <Route path="/product/:productId" element={<ProductDetailPage />} />
-        {/* 상품수정 */}
-        <Route
-          path="/product/modify/:productId"
-          element={<ProductModifyPage />}
-        />
         {/* 콘텐츠 */}
         <Route path="/content" element={<ContentPage />} />
         {/* 회원 */}

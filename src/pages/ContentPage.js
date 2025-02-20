@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { getList, remove } from '../api/contentApi';
 import { API_SERVER_HOST } from '../config/apiConfig';
+import axiosInstance from '../api/axiosInstance';
 import {
   Container,
   Grid,
@@ -66,8 +67,7 @@ const ContentPage = () => {
 
     try {
       const response = await getList(params);
-      console.log('response', response);
-      setContents(response.dtoList || []);
+      setContents(response || []);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('콘텐츠 목록 로딩 실패:', error);
@@ -211,32 +211,13 @@ const ContentPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {contents.map((content) => (
+              {contents.map((content, index) => (
                 <TableRow key={content.id} hover>
-                  <TableCell>{content.id}</TableCell>
-                  <TableCell>{content.divisionName}</TableCell>
-                  <TableCell>{content.title}</TableCell>
-                  <TableCell>
-                    {content.uploadFileNames && content.uploadFileNames[0] && (
-                      <Box
-                        component="img"
-                        src={`${API_SERVER_HOST}/api/admin/content/view/${content.uploadFileNames[0]}`}
-                        alt={content.title}
-                        sx={{
-                          width: 50,
-                          height: 50,
-                          objectFit: 'cover',
-                          borderRadius: 1,
-                        }}
-                      />
-                    )}
-                  </TableCell>
-                  <TableCell>{content.createdAt}</TableCell>
-                  <TableCell>{content.modifiedAt}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{content.festivalName}</TableCell>
+                  <TableCell>{content.actorCharacter}</TableCell>
+                  <TableCell>{content.actorName}</TableCell>
                   <TableCell align="center">
-                    <IconButton size="small" sx={{ color: '#FFB7F2' }}>
-                      <EditIcon />
-                    </IconButton>
                     <IconButton
                       size="small"
                       sx={{ color: '#ff8484' }}

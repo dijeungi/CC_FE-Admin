@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getList = async (pageParam) => {
   const { page, size, sort, name, divisionId } = pageParam;
-  const response = await axiosInstance.get(`/festival/list`, {
+  const response = await axiosInstance.get(`/actor/list`, {
     params: {
       page: page,
       size: size,
@@ -21,7 +21,7 @@ export const getFestivalId = async () => {
 };
 
 export const getOne = async (contentId) => {
-  const response = await axiosInstance.get(`/content/${contentId}`);
+  const response = await axiosInstance.get(`/actor/${contentId}`);
   return response.data;
 };
 
@@ -33,7 +33,7 @@ export const register = async (content) => {
   };
 
   try {
-    const response = await axiosInstance.post(`/festival/add`, content, {
+    const response = await axiosInstance.post(`/actor/add`, content, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -53,7 +53,7 @@ export const modify = async (contentId, content) => {
     },
   };
   const response = await axiosInstance.put(
-    `/content/${contentId}`,
+    `/actor/${contentId}`,
     content,
     header,
   );
@@ -62,7 +62,7 @@ export const modify = async (contentId, content) => {
 
 export const remove = async (contentId) => {
   const response = await axiosInstance.delete(
-    `/festival/delete?actorId=${contentId}`,
+    `/actor/delete?actorId=${contentId}`,
   );
   return response.data;
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/layouts/Header';
-import { getList, remove } from '../../api/productApi';
-import { API_SERVER_HOST, FRONT_USER_HOST } from '../../config/apiConfig';
+import { getList, remove } from '../../api/festivalApi';
 import {
   Container,
   Grid,
@@ -20,7 +19,6 @@ import {
   Paper,
   IconButton,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import PageComponent from '../../components/common/PageComponent';
@@ -33,7 +31,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
 
 const initState = {
-  dtoList: [], // product 목록
+  dtoList: [],
   pageNumList: [],
   pageRequestDTO: null,
   prev: false,
@@ -44,32 +42,32 @@ const initState = {
   current: 0,
 };
 
-const ProductPage = () => {
-  const [products, setProducts] = useState([]);
+const FestivalPage = () => {
+  const [festivals, setFestivals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedFestival, setSelectedFestival] = useState(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedFestivals, setSelectedFestivals] = useState([]);
   const [alertMessage, setAlertMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
 
-  const fetchProducts = async () => {
+  const fetchFestivals = async () => {
     const params = {
       page: page,
       size: 10,
       sort: 'desc',
       name: searchTerm,
-      categoryId: null,
     };
 
     try {
       const response = await getList(params);
-      setProducts(response || []);
+      setFestivals(response.dtoList || []);
+      console.log('dtoList: ', response.dtoList);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('공연 목록 로딩 실패:', error);
@@ -77,24 +75,23 @@ const ProductPage = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchFestivals();
   }, [page]);
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleDeleteClick = (product) => {
-    console.log('handleDeleteClick product', product);
-    setSelectedProduct(product);
+  const handleDeleteClick = (festival) => {
+    setSelectedFestival(festival);
     setDeleteModalOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
     try {
-      await remove(selectedProduct.id);
+      await remove(selectedFestival.id);
       setDeleteModalOpen(false);
-      fetchProducts(); // 목록 새로고침
+      fetchFestivals();
     } catch (error) {
       console.error('공연 삭제 실패:', error);
     }
@@ -104,41 +101,40 @@ const ProductPage = () => {
     try {
       await registerProductExcel(file);
       setShowUploadModal(false);
-      setUploadModalOpen(true); // 성공 알림 모달
-      fetchProducts();
+      setUploadModalOpen(true);
+      fetchFestivals();
     } catch (error) {
       console.error('엑셀 업로드 실패:', error);
     }
   };
 
-  const handleSelectProduct = (productId) => {
-    setSelectedProducts((prev) => {
-      if (prev.includes(productId)) {
-        return prev.filter((id) => id !== productId);
+  const handleSelectProduct = (festivalId) => {
+    setSelectedFestivals((prev) => {
+      if (prev.includes(festivalId)) {
+        return prev.filter((id) => id !== festivalId);
       } else {
-        return [...prev, productId];
+        return [...prev, festivalId];
       }
     });
   };
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
-      setSelectedProducts(products.map((product) => product.id));
+      setSelectedFestivals(festivals.map((festival) => festival.id));
     } else {
-      setSelectedProducts([]);
+      setSelectedFestivals([]);
     }
   };
 
   const handleDownload = async () => {
-    console.log('handleDownload selectedProducts:', selectedProducts);
-    if (selectedProducts.length === 0) {
+    if (selectedFestivals.length === 0) {
       setAlertMessage('공연 체크를 먼저 해주셔야 합니다!');
       setShowAlert(true);
       return;
     }
 
     try {
-      const response = await downloadProductExcel(selectedProducts);
+      const response = await downloadProductExcel(selectedFestivals);
       // 소문자로 된 헤더 키를 사용
 
       // 응답 헤더 확인을 위한 로깅
@@ -195,18 +191,6 @@ const ProductPage = () => {
             <Grid item>
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
-                sx={{
-                  backgroundColor: '#FFB7F2',
-                  '&:hover': { backgroundColor: '#ff9ee8' },
-                  mr: 1,
-                }}
-                onClick={() => navigate('/product/register')}
-              >
-                공연 등록
-              </Button>
-              <Button
-                variant="contained"
                 startIcon={<CloudUploadIcon />}
                 sx={{
                   backgroundColor: '#217346',
@@ -245,7 +229,7 @@ const ProductPage = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
                     endAdornment: (
-                      <IconButton onClick={fetchProducts}>
+                      <IconButton onClick={fetchFestivals}>
                         <SearchIcon />
                       </IconButton>
                     ),
@@ -263,10 +247,10 @@ const ProductPage = () => {
               <TableRow sx={{ backgroundColor: '#fff5fc' }}>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   <Checkbox
-                    checked={selectedProducts.length === products.length}
+                    checked={selectedFestivals.length === festivals.length}
                     indeterminate={
-                      selectedProducts.length > 0 &&
-                      selectedProducts.length < products.length
+                      selectedFestivals.length > 0 &&
+                      selectedFestivals.length < festivals.length
                     }
                     onChange={handleSelectAll}
                   />
@@ -328,37 +312,41 @@ const ProductPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map((product, index) => (
-                <TableRow key={product.id} hover>
+              {festivals.map((festival, index) => (
+                <TableRow key={festival.id} hover>
                   <TableCell>
                     <Checkbox
-                      checked={selectedProducts.includes(product.id)}
-                      onChange={() => handleSelectProduct(product.id)}
+                      checked={selectedFestivals.includes(festival.id)}
+                      onChange={() => handleSelectProduct(festival.id)}
                     />
                   </TableCell>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{product.categoryId}</TableCell>
-                  <TableCell>{product.festivalName}</TableCell>
-                  <TableCell>{product.placeName}</TableCell>
-                  <TableCell>{product.fromDate}</TableCell>
-                  <TableCell>{product.toDate}</TableCell>
-                  <TableCell>{product.festivalStateName}</TableCell>
-                  <TableCell>{product.salePercent.toLocaleString()}%</TableCell>
+                  <TableCell>{festival.categoryId}</TableCell>
+                  <TableCell>{festival.festivalName}</TableCell>
+                  <TableCell>{festival.placeName}</TableCell>
+                  <TableCell>{festival.fromDate}</TableCell>
+                  <TableCell>{festival.toDate}</TableCell>
+                  <TableCell>{festival.festivalStateName}</TableCell>
                   <TableCell>
-                    {product.festivalPrice?.toLocaleString()}원
+                    {festival.salePercent.toLocaleString()}%
                   </TableCell>
-                  <TableCell>{product.salePrice?.toLocaleString()}원</TableCell>
-                  <TableCell>{product.runningTime}</TableCell>
-                  <TableCell>{product.age}</TableCell>
-                  <TableCell>{product.mdPick}</TableCell>
-                  <TableCell>{product.premier}</TableCell>
-                  <TableCell>{product.ranking}</TableCell>
-                  {/* <TableCell>{product.postImage}</TableCell> */}
+                  <TableCell>
+                    {festival.festivalPrice?.toLocaleString()}원
+                  </TableCell>
+                  <TableCell>
+                    {festival.salePrice?.toLocaleString()}원
+                  </TableCell>
+                  <TableCell>{festival.runningTime}</TableCell>
+                  <TableCell>{festival.age}</TableCell>
+                  <TableCell>{festival.mdPick}</TableCell>
+                  <TableCell>{festival.premier}</TableCell>
+                  <TableCell>{festival.ranking}</TableCell>
+                  {/* <TableCell>{festival.postImage}</TableCell> */}
                   <TableCell align="center">
                     <IconButton
                       size="small"
                       sx={{ color: '#ff8484' }}
-                      onClick={() => handleDeleteClick(product)}
+                      onClick={() => handleDeleteClick(festival)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -409,4 +397,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default FestivalPage;

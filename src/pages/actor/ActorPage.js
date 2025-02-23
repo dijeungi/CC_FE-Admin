@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import { getList, remove } from '../api/contentApi';
-import { API_SERVER_HOST } from '../config/apiConfig';
-import axiosInstance from '../api/axiosInstance';
+import { getList, remove } from '../../api/actorApi';
+import { API_SERVER_HOST } from '../../config/apiConfig';
+import axiosInstance from '../../api/axiosInstance';
 import {
   Container,
   Grid,
@@ -22,19 +22,18 @@ import {
   IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import PageComponent from '../components/common/PageComponent';
-import AlertModal from '../components/common/AlertModal';
-import Header from '../components/layouts/Header';
+import PageComponent from '../../components/common/PageComponent';
+import AlertModal from '../../components/common/AlertModal';
+import Header from '../../components/layouts/Header';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { registerContentExcel } from '../api/excelApi';
-import UploadModal from '../components/common/UploadModal';
-import ContentModal from '../components/content/ContentModel';
+import { registerContentExcel } from '../../api/excelApi';
+import UploadModal from '../../components/common/UploadModal';
+import ActorModal from '../../components/actor/ActorModel';
 
 const initState = {
-  dtoList: [], // 콘텐츠 목록
+  dtoList: [],
   pageNumList: [],
   pageRequestDTO: null,
   prev: false,
@@ -45,7 +44,7 @@ const initState = {
   current: 0,
 };
 
-const ContentPage = () => {
+const ActorPage = () => {
   const [contents, setContents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -62,12 +61,12 @@ const ContentPage = () => {
       size: 10,
       sort: 'desc',
       name: searchTerm,
-      divisionId: null,
     };
 
     try {
       const response = await getList(params);
-      setContents(response || []);
+      setContents(response.dtoList || []);
+
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('콘텐츠 목록 로딩 실패:', error);
@@ -92,7 +91,7 @@ const ContentPage = () => {
     try {
       await remove(selectedContent.id);
       setDeleteModalOpen(false);
-      fetchContents(); // 목록 새로고침
+      fetchContents();
     } catch (error) {
       console.error('콘텐츠 삭제 실패:', error);
     }
@@ -101,7 +100,6 @@ const ContentPage = () => {
   const handleContentSubmit = async (newContent) => {
     try {
       console.log('배우 등록 데이터:', newContent);
-      // 여기에 API 연동 로직 추가
       setShowContentModal(false);
       fetchContents();
     } catch (error) {
@@ -113,7 +111,7 @@ const ContentPage = () => {
     try {
       await registerContentExcel(file);
       setShowUploadModal(false);
-      setUploadModalOpen(true); // 성공 알림 모달
+      setUploadModalOpen(true);
       fetchContents();
     } catch (error) {
       console.error('엑셀 업로드 실패:', error);
@@ -169,7 +167,7 @@ const ContentPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="배우명 검색"
+                  placeholder="공연명, 배역, 등장인물 검색"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{
@@ -254,7 +252,7 @@ const ContentPage = () => {
         isSuccess={true}
         onConfirm={() => setUploadModalOpen(false)}
       />
-      <ContentModal
+      <ActorModal
         open={showContentModal}
         handleClose={() => setShowContentModal(false)}
         title="배우 등록"
@@ -270,4 +268,4 @@ const ContentPage = () => {
   );
 };
 
-export default ContentPage;
+export default ActorPage;

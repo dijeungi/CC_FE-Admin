@@ -62,23 +62,33 @@ const Header = () => {
     },
     {
       text: '공통코드',
-      path: '/category',
-      onClick: () => checkLoginAndNavigate('/category'),
+      path: '/common',
+      onClick: () => checkLoginAndNavigate('/common'),
     },
     {
       text: '공연',
-      path: '/product',
-      onClick: () => checkLoginAndNavigate('/product'),
+      path: '/festival',
+      onClick: () => checkLoginAndNavigate('/festival'),
+    },
+    {
+      text: '등록허가',
+      path: '/access',
+      onClick: () => checkLoginAndNavigate('/access'),
     },
     {
       text: '배우',
-      path: '/content',
-      onClick: () => checkLoginAndNavigate('/content'),
+      path: '/actor',
+      onClick: () => checkLoginAndNavigate('/actor'),
     },
     {
       text: '회원',
       path: '/member',
       onClick: () => checkLoginAndNavigate('/member'),
+    },
+    {
+      text: '결제내역',
+      path: '/payment',
+      onClick: () => checkLoginAndNavigate('/payment'),
     },
     {
       text: id ? '로그아웃' : '로그인',

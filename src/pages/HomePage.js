@@ -24,8 +24,8 @@ const HomePage = () => {
           }}
         >
           {/* 대시보드 카드들 */}
-          <DashboardCard title="총 주문" value="124" />
-          <DashboardCard title="오늘의 매출" value="₩1,234,000" />
+          <DashboardCard title="총 공연" value="69" />
+          <DashboardCard title="총 배우" value="1,000" />
           <DashboardCard title="신규 회원" value="12" />
           <DashboardCard title="문의사항" value="5" />
         </div>

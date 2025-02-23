@@ -3,8 +3,15 @@ import { API_SERVER_HOST } from '../config/apiConfig';
 import axios from 'axios';
 
 // list
-export const getProductCategoryList = async () => {
-  const response = await axiosInstance.get(`/common/list`);
+export const getProductCategoryList = async (pageParam) => {
+  const { page, size, sort } = pageParam;
+  const response = await axiosInstance.get(`/common/list`, {
+    params: {
+      page: page,
+      size: size,
+      sort: sort,
+    },
+  });
   return response.data;
 };
 

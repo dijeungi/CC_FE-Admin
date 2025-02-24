@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
 import { loginPost } from '../api/loginApi';
 import AlertModal from '../components/common/AlertModal';
-import Header from '../components/layouts/Header';
 import { login } from '../slices/loginSlice';
 import { useNavigate } from 'react-router-dom';
-
-import {
-  Container,
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-} from '@mui/material';
 import { useDispatch } from 'react-redux';
+import styles from '../styles/LoginPage.module.css';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -35,7 +26,6 @@ const LoginPage = () => {
           accessToken: result.accessToken,
         }),
       );
-
       setIsSuccess(true);
       setAlertMessage('로그인이 성공하였습니다');
       setOpenAlert(true);
@@ -56,106 +46,44 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
-      <Header />
-      <Container maxWidth="xs">
-        <Box sx={{ mt: 8, mb: 4 }}>
-          <Paper
-            elevation={3}
-            sx={{
-              p: 4,
-              borderRadius: 2,
-              boxShadow: '0 4px 20px rgba(255, 183, 242, 0.25)',
-              maxWidth: '400px',
-              margin: '0 auto',
-            }}
-          >
-            <Typography
-              variant="h4"
-              component="h1"
-              align="center"
-              gutterBottom
-              sx={{
-                color: '#2A0934',
-                fontWeight: 'bold',
-                mb: 3,
-              }}
-            >
+    <div className={styles.loginPage}>
+      <div className={styles.container}>
+        <div className={styles.formWrapper}>
+          <h1 className={styles.title}>로그인</h1>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <label htmlFor="id" className={styles.label}>
+              계정
+            </label>
+            <input
+              type="text"
+              id="id"
+              name="id"
+              autoComplete="id"
+              autoFocus
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              required
+              className={styles.inputField}
+            />
+            <label htmlFor="password" className={styles.label}>
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={styles.inputField}
+            />
+            <button type="submit" className={styles.submitButton}>
               로그인
-            </Typography>
-            <form onSubmit={handleSubmit}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="id"
-                label="계정"
-                name="id"
-                autoComplete="id"
-                autoFocus
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: '#FFB7F2',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#FFB7F2',
-                    },
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#2A0934',
-                  },
-                }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="비밀번호"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    '&:hover fieldset': {
-                      borderColor: '#FFB7F2',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#FFB7F2',
-                    },
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                    color: '#2A0934',
-                  },
-                }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  bgcolor: '#FFB7F2',
-                  color: '#2A0934',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    bgcolor: '#FF9BE8',
-                  },
-                }}
-              >
-                로그인
-              </Button>
-            </form>
-          </Paper>
-        </Box>
-      </Container>
-
+            </button>
+          </form>
+        </div>
+      </div>
       <AlertModal
         open={openAlert}
         onClose={handleCloseAlert}

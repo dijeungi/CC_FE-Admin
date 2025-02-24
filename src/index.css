@@ -37,26 +37,13 @@ body {
   -webkit-overflow-scrolling: touch; /* iOS 스크롤 최적화 */
 }
 
-/* 테이블 반응형 스타일 */
-.MuiTableContainer-root {
-  margin: 0 auto;
-  width: 100% !important;
-  overflow-x: auto;
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
 }
 
-.MuiTable-root {
-  min-width: 1200px; /* 테이블 최소 너비 설정 */
-}
-
-/* 테이블 셀 여백 조정 */
-.MuiTableCell-root {
-  padding: 16px 12px !important;
-  white-space: nowrap;
-}
-
-/* 큰 화면에서의 컨테이너 최대 너비 */
-@media (min-width: 1280px) {
-  .MuiContainer-root {
-    max-width: 1400px !important;
-  }
+.App {
 }

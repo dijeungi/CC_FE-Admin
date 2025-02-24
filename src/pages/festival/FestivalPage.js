@@ -1,46 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../components/layouts/Header';
 import { getList, remove } from '../../api/festivalApi';
-import {
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
+import { registerProductExcel, downloadProductExcel } from '../../api/excelApi';
 import PageComponent from '../../components/common/PageComponent';
 import AlertModal from '../../components/common/AlertModal';
-import { registerProductExcel, downloadProductExcel } from '../../api/excelApi';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UploadModal from '../../components/common/UploadModal';
-import Checkbox from '@mui/material/Checkbox';
-import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from 'react-router-dom';
-
-const initState = {
-  dtoList: [],
-  pageNumList: [],
-  pageRequestDTO: null,
-  prev: false,
-  prevPage: 0,
-  nextPage: 0,
-  next: false,
-  totalCount: 0,
-  current: 0,
-};
+import styles from '../../styles/FestivalPage.module.css';
 
 const FestivalPage = () => {
   const [festivals, setFestivals] = useState([]);
@@ -67,7 +32,6 @@ const FestivalPage = () => {
     try {
       const response = await getList(params);
       setFestivals(response.dtoList || []);
-      console.log('dtoList: ', response.dtoList);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('공연 목록 로딩 실패:', error);
@@ -132,25 +96,17 @@ const FestivalPage = () => {
       setShowAlert(true);
       return;
     }
-
     try {
       const response = await downloadProductExcel(selectedFestivals);
-      // 소문자로 된 헤더 키를 사용
-
-      // 응답 헤더 확인을 위한 로깅
       console.log('Download response headers:', response.headers);
-
       const contentDisposition = response.headers['content-disposition'];
-      let filename = 'products.xlsx'; // 기본 파일명
-      console.log('Content-Disposition:', contentDisposition); // 디버깅용
-
+      let filename = 'products.xlsx';
       if (contentDisposition) {
         const matches = contentDisposition.match(/filename="(.+)"/);
         if (matches && matches[1]) {
           filename = decodeURIComponent(matches[1]);
         }
       }
-
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement('a');
       a.href = url;
@@ -167,202 +123,162 @@ const FestivalPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
-      <Header />
-      <Container
-        maxWidth={false}
-        sx={{
-          mt: 4,
-          mb: 4,
-          px: { xs: 2, sm: 3, md: 4, lg: 6 }, // 반응형 패딩
-          maxWidth: { xl: '1400px' }, // 큰 화면에서 최대 너비
-        }}
-      >
-        <Box sx={{ mb: 4 }}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <Typography
-                variant="h4"
-                sx={{ color: '#2A0934', fontWeight: 'bold' }}
-              >
-                공연 관리
-              </Typography>
-            </Grid>
-            {/* <Grid item>
-              <Button
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
-                sx={{
-                  backgroundColor: '#217346',
-                  '&:hover': { backgroundColor: '#1a5c38' },
-                  mr: 1,
-                }}
-                onClick={() => setShowUploadModal(true)}
-              >
-                엑셀 업로드
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                sx={{
-                  backgroundColor: '#217346',
-                  '&:hover': { backgroundColor: '#1a5c38' },
-                  mr: 1,
-                }}
-                onClick={handleDownload}
-              >
-                엑셀 다운로드
-              </Button>
-            </Grid> */}
-          </Grid>
-        </Box>
+    <div className={styles.festivalPage}>
+      <div className={styles.container}>
+        <div className={styles.headerSection}>
+          <h1 className={styles.title}>공연 관리</h1>
 
-        <Card sx={{ mb: 4, backgroundColor: 'white', borderRadius: 2 }}>
-          <CardContent>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="공연명 검색"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton onClick={fetchFestivals}>
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+          <div className={styles.searchCard}>
+            <div className={styles.searchCardContent}>
+              <input
+                type="text"
+                placeholder="공연명 검색"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+              <button onClick={fetchFestivals} className={styles.searchButton}>
+                <span className={styles.searchIcon}>🔍</span>
+              </button>
+            </div>
+          </div>
 
-        <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#fff5fc' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  <Checkbox
-                    checked={selectedFestivals.length === festivals.length}
-                    indeterminate={
-                      selectedFestivals.length > 0 &&
-                      selectedFestivals.length < festivals.length
+          {/* 엑셀 업로드/다운로드 버튼 영역 (필요시 주석 해제) */}
+          {/*
+          <div className={styles.buttonGroup}>
+            <button className={styles.uploadButton} onClick={() => setShowUploadModal(true)}>
+              엑셀 업로드
+            </button>
+            <button className={styles.downloadButton} onClick={handleDownload}>
+              엑셀 다운로드
+            </button>
+          </div>
+          */}
+        </div>
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableHeaderRow}>
+                <th className={styles.tableHeaderCell}>
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedFestivals.length === festivals.length &&
+                      festivals.length > 0
                     }
                     onChange={handleSelectAll}
                   />
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.count}`}>
                   순번
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.category}`}>
                   카테고리
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  공연명
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  지역
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  시작일
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  종료일
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  공연상태
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  할인율
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  가격
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  할인가격
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  상영시간
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  연령가
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  MD PICK
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  수상작유무
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  인기순위
-                </TableCell>
-                {/* <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  이미지
-                </TableCell> */}
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: 'bold', color: '#2A0934' }}
+                </th>
+                <th
+                  className={`${styles.tableHeaderCell} ${styles.festivalname}`}
                 >
+                  공연명
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.region}`}>
+                  지역
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.startDate}`}>
+                  시작일
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.endDate}`}>
+                  종료일
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.state}`}>
+                  공연상태
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.discount}`}>
+                  할인율
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.price}`}>
+                  가격
+                </th>
+                <th
+                  className={`${styles.tableHeaderCell} ${styles.discountPrice}`}
+                >
+                  할인가격
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.time}`}>
+                  상영시간
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.age}`}>
+                  연령가
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.mdPick}`}>
+                  MD PICK
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.aww}`}>
+                  수상작유무
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.ranking}`}>
+                  인기순위
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.manage}`}>
                   관리
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
               {festivals.map((festival, index) => (
-                <TableRow key={festival.id} hover>
-                  <TableCell>
-                    <Checkbox
+                <tr key={festival.id} className={styles.tableRow}>
+                  <td className={styles.tableCell}>
+                    <input
+                      type="checkbox"
                       checked={selectedFestivals.includes(festival.id)}
                       onChange={() => handleSelectProduct(festival.id)}
                     />
-                  </TableCell>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{festival.categoryId}</TableCell>
-                  <TableCell>{festival.festivalName}</TableCell>
-                  <TableCell>{festival.placeName}</TableCell>
-                  <TableCell>{festival.fromDate}</TableCell>
-                  <TableCell>{festival.toDate}</TableCell>
-                  <TableCell>{festival.festivalStateName}</TableCell>
-                  <TableCell>
-                    {festival.salePercent.toLocaleString()}%
-                  </TableCell>
-                  <TableCell>
+                  </td>
+                  <td className={styles.tableCell}>{index + 1}</td>
+                  <td className={styles.tableCell}>{festival.categoryId}</td>
+                  <td className={styles.tableCell}>{festival.festivalName}</td>
+                  <td className={styles.tableCell}>{festival.placeName}</td>
+                  <td className={styles.tableCell}>{festival.fromDate}</td>
+                  <td className={styles.tableCell}>{festival.toDate}</td>
+                  <td className={styles.tableCell}>
+                    {festival.festivalStateName}
+                  </td>
+                  <td className={styles.tableCell}>
+                    {festival.salePercent?.toLocaleString()}%
+                  </td>
+                  <td className={styles.tableCell}>
                     {festival.festivalPrice?.toLocaleString()}원
-                  </TableCell>
-                  <TableCell>
+                  </td>
+                  <td className={styles.tableCell}>
                     {festival.salePrice?.toLocaleString()}원
-                  </TableCell>
-                  <TableCell>{festival.runningTime}</TableCell>
-                  <TableCell>{festival.age}</TableCell>
-                  <TableCell>{festival.mdPick}</TableCell>
-                  <TableCell>{festival.premier}</TableCell>
-                  <TableCell>{festival.ranking}</TableCell>
-                  {/* <TableCell>{festival.postImage}</TableCell> */}
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      sx={{ color: '#ff8484' }}
+                  </td>
+                  <td className={styles.tableCell}>{festival.runningTime}</td>
+                  <td className={styles.tableCell}>{festival.age}</td>
+                  <td className={styles.tableCell}>{festival.mdPick}</td>
+                  <td className={styles.tableCell}>{festival.premier}</td>
+                  <td className={styles.tableCell}>{festival.ranking}</td>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellCenter}`}
+                  >
+                    <button
+                      className={styles.deleteButton}
                       onClick={() => handleDeleteClick(festival)}
                     >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                      <span className={styles.deleteIcon}>🗑</span>
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </tbody>
+          </table>
+        </div>
 
         <PageComponent
           page={page}
           totalPages={totalPages}
           handlePageChange={handlePageChange}
         />
-      </Container>
+      </div>
 
       <AlertModal
         open={deleteModalOpen}

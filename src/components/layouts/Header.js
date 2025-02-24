@@ -1,23 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutPost } from '../../api/loginApi';
 import { useNavigate } from 'react-router-dom';
 import AlertModal from '../common/AlertModal';
 import { logout } from '../../slices/loginSlice';
+import styles from '../../styles/Header.module.css';
 
 const Header = () => {
   const { id } = useSelector((state) => state.loginSlice);
@@ -55,11 +43,7 @@ const Header = () => {
   };
 
   const menuItems = [
-    {
-      text: '홈',
-      path: '/',
-      onClick: () => checkLoginAndNavigate('/'),
-    },
+    { text: '홈', path: '/', onClick: () => checkLoginAndNavigate('/') },
     {
       text: '공통코드',
       path: '/common',
@@ -97,18 +81,6 @@ const Header = () => {
     },
   ];
 
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <List>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} component={Link} to={item.path}>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
   const handleCloseAlert = () => {
     setOpenAlert(false);
     if (!id) {
@@ -118,68 +90,38 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: '#FFB7F2' }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              flexGrow: 1,
-              display: {
-                xs: 'none',
-                sm: 'block',
-                fontSize: '25px',
-                fontWeight: 'bold',
-              },
-            }}
-          >
-            CampusConcert 관리페이지
-          </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+      <header className={styles.header}>
+        <div className={styles.navbar}>
+          <h1 className={styles.title}>CampusConcert 관리페이지</h1>
+          <nav className={styles.menuBox}>
             {menuItems.map((item) => (
-              <Button
+              <button
                 key={item.text}
                 onClick={item.onClick}
-                sx={{
-                  color: '#fff',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    color: '#2A0934',
-                    transition: 'color 0.3s ease',
-                  },
-                }}
+                className={styles.menuButton}
               >
                 {item.text}
-              </Button>
+              </button>
             ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true,
-        }}
-        sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-        }}
-      >
-        {drawer}
-      </Drawer>
+          </nav>
+        </div>
+      </header>
+
+      {mobileOpen && (
+        <aside className={styles.drawer}>
+          <div className={styles.drawerBox}>
+            <ul>
+              {menuItems.map((item) => (
+                <li key={item.text}>
+                  <Link to={item.path} onClick={handleDrawerToggle}>
+                    {item.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      )}
 
       <AlertModal
         open={openAlert}

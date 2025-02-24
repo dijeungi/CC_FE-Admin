@@ -1,0 +1,125 @@
+.festivalPage {
+  width: 100%;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 1rem 0;
+}
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  color: #2a0934;
+  font-weight: bold;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.buttonGroup {
+}
+
+.searchCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  width: 400px;
+}
+
+.searchCardContent {
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #fff;
+  outline: none;
+  border-radius: 4px;
+}
+
+.searchButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.searchIcon {
+  display: inline-block;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHeaderRow {
+  background-color: #fff5fc;
+}
+
+.tableHeaderCell {
+  padding: 0.75rem;
+  font-weight: bold;
+  color: #2a0934;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.tableHeaderCellCenter {
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.tableRow:hover {
+  background-color: #f9f9f9;
+}
+
+.tableCell {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.tableCellCenter {
+  text-align: center;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #ff8484;
+}
+
+.deleteIcon {
+  font-size: 1.2rem;
+}
+
+.count {
+  width: 57px;
+}
+
+.category {
+  width: 89px;
+}
+
+.festivalname {
+  width: 247px;
+}

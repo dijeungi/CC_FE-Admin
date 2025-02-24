@@ -1,48 +1,12 @@
 import React, { useEffect, useState } from 'react';
-
 import { getList, remove } from '../../api/actorApi';
-import { API_SERVER_HOST } from '../../config/apiConfig';
-import axiosInstance from '../../api/axiosInstance';
-import {
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
+import { registerContentExcel } from '../../api/excelApi';
+import Header from '../../components/layouts/Header';
 import PageComponent from '../../components/common/PageComponent';
 import AlertModal from '../../components/common/AlertModal';
-import Header from '../../components/layouts/Header';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { registerContentExcel } from '../../api/excelApi';
 import UploadModal from '../../components/common/UploadModal';
 import ActorModal from '../../components/actor/ActorModel';
-
-const initState = {
-  dtoList: [],
-  pageNumList: [],
-  pageRequestDTO: null,
-  prev: false,
-  prevPage: 0,
-  nextPage: 0,
-  next: false,
-  totalCount: 0,
-  current: 0,
-};
+import styles from '../../styles/ActorPage.module.css';
 
 const ActorPage = () => {
   const [contents, setContents] = useState([]);
@@ -66,7 +30,6 @@ const ActorPage = () => {
     try {
       const response = await getList(params);
       setContents(response.dtoList || []);
-
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('콘텐츠 목록 로딩 실패:', error);
@@ -75,6 +38,7 @@ const ActorPage = () => {
 
   useEffect(() => {
     fetchContents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const handlePageChange = (event, newPage) => {
@@ -82,7 +46,6 @@ const ActorPage = () => {
   };
 
   const handleDeleteClick = (content) => {
-    console.log('handleDeleteClick content', content);
     setSelectedContent(content);
     setDeleteModalOpen(true);
   };
@@ -119,127 +82,107 @@ const ActorPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
-      <Header />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <Typography
-                variant="h4"
-                sx={{ color: '#2A0934', fontWeight: 'bold' }}
-              >
-                배우 관리
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                sx={{
-                  backgroundColor: '#FFB7F2',
-                  '&:hover': { backgroundColor: '#ff9ee8' },
-                  mr: 1,
-                }}
-                onClick={() => setShowContentModal(true)}
-              >
-                배우 등록
-              </Button>
-              {/* <Button
-                variant="contained"
-                startIcon={<CloudUploadIcon />}
-                sx={{
-                  backgroundColor: '#217346',
-                  '&:hover': { backgroundColor: '#1a5c38' },
-                }}
-                onClick={() => setShowUploadModal(true)}
-              >
-                엑셀 업로드
-              </Button> */}
-            </Grid>
-          </Grid>
-        </Box>
+    <div className={styles.actorPage}>
+      <div className={styles.container}>
+        <div className={styles.headerSection}>
+          <h1 className={styles.title}>배우 관리</h1>
 
-        <Card sx={{ mb: 4, backgroundColor: 'white', borderRadius: 2 }}>
-          <CardContent>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="공연명, 등장인물 검색"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton onClick={fetchContents}>
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+          <div className={styles.searchCard}>
+            <div className={styles.searchCardContent}>
+              <input
+                type="text"
+                placeholder="공연명, 등장인물 검색"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+              <button onClick={fetchContents} className={styles.searchButton}>
+                <span className={styles.searchIcon}>🔍</span>
+              </button>
+            </div>
+          </div>
 
-        <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#fff5fc' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+          <div className={styles.headerButtons}>
+            <button
+              className={styles.addButton}
+              onClick={() => setShowContentModal(true)}
+            >
+              배우 등록
+            </button>
+            <button
+              className={styles.uploadButton}
+              onClick={() => setShowUploadModal(true)}
+            >
+              엑셀 업로드
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableHeaderRow}>
+                <th className={`${styles.tableHeaderCell} $ ${styles.count}`}>
                   순번
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                </th>
+                <th className={`${styles.tableHeaderCell} $ ${styles.name}`}>
                   공연명
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  배역
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  성명
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: 'bold', color: '#2A0934' }}
+                </th>
+                <th
+                  className={`${styles.tableHeaderCell} $ ${styles.character}`}
                 >
-                  관리
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+                  배역
+                </th>
+                <th
+                  className={`${styles.tableHeaderCell} $ ${styles.actorname}`}
+                >
+                  성명
+                </th>
+                <th className={styles.tableHeaderCellCenter}>관리</th>
+              </tr>
+            </thead>
+            <tbody>
               {contents.map((content, index) => (
-                <TableRow key={content.id} hover>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{content.festivalName}</TableCell>
-                  <TableCell>{content.actorCharacter}</TableCell>
-                  <TableCell>{content.actorName}</TableCell>
-                  <TableCell align="center">
-                    <IconButton
-                      size="small"
-                      sx={{ color: '#ff8484' }}
+                <tr key={content.id} className={styles.tableRow}>
+                  <td className={`${styles.tableCell} ${styles.count}`}>
+                    {index + 1}
+                  </td>
+                  <td className={`${styles.tableCell} ${styles.name}`}>
+                    {content.festivalName}
+                  </td>
+                  <td className={`${styles.tableCell} ${styles.character}`}>
+                    {content.actorCharacter}
+                  </td>
+                  <td className={`${styles.tableCell} ${styles.actorname}`}>
+                    {content.actorName}
+                  </td>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellCenter}`}
+                  >
+                    <button
+                      className={styles.deleteButton}
                       onClick={() => handleDeleteClick(content)}
                     >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                      <span className={styles.deleteIcon}>🗑</span>
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </tbody>
+          </table>
+        </div>
 
         <PageComponent
           page={page}
           totalPages={totalPages}
           handlePageChange={handlePageChange}
         />
-      </Container>
+      </div>
+
       <AlertModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        title="콘테츠 삭제"
+        title="콘텐츠 삭제"
         message="정말 삭제하시겠습니까?"
         isSuccess={false}
         onConfirm={handleDeleteConfirm}
@@ -258,7 +201,6 @@ const ActorPage = () => {
         title="배우 등록"
         onSubmit={handleContentSubmit}
       />
-
       <UploadModal
         open={showUploadModal}
         onClose={() => setShowUploadModal(false)}

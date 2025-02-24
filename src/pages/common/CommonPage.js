@@ -1,33 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../components/layouts/Header';
-import {
-  Box,
-  Container,
-  Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  IconButton,
-  Button,
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 import CategoryModal from '../../components/category/CategoryModal';
 import CategoryEditModal from '../../components/category/CategoryEditModal';
+import AlertModal from '../../components/common/AlertModal';
+import PageComponent from '../../components/common/PageComponent';
 import {
   getProductCategoryList,
   registerProductCategory,
   editProductCategory,
   removeProductCategory,
 } from '../../api/categoryApi';
-// import { API_SERVER_HOST } from '../../config/apiConfig';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AlertModal from '../../components/common/AlertModal';
-import PageComponent from '../../components/common/PageComponent';
+import styles from '../../styles/CategoryPage.module.css';
 
 const CategoryPage = () => {
   const [productCategories, setProductCategories] = useState([]);
@@ -56,7 +38,6 @@ const CategoryPage = () => {
     try {
       const response = await getProductCategoryList(params);
       setProductCategories(response.dtoList || []);
-      console.log('dtoList: ', response.dtoList);
       setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('공통코드 목록 로딩 실패:', error);
@@ -84,7 +65,7 @@ const CategoryPage = () => {
       setSelectedCategory(null);
       fetchCategories();
     } catch (error) {
-      console.error(`공통코드 수정 실패:`, error);
+      console.error('공통코드 수정 실패:', error);
     }
   };
 
@@ -96,7 +77,6 @@ const CategoryPage = () => {
   const handleDeleteConfirm = async () => {
     try {
       await removeProductCategory(selectedCategory.id);
-
       setDeleteModalOpen(false);
       fetchCategories();
     } catch (error) {
@@ -105,87 +85,67 @@ const CategoryPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
-      <Header />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ mb: 4 }}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={3}
-          >
-            <Typography
-              variant="h4"
-              sx={{ color: '#2A0934', fontWeight: 'bold' }}
-            >
-              공통코드 관리
-            </Typography>
-            <Button
-              startIcon={<AddIcon />}
+    <div className={styles.categoryPage}>
+      <div className={styles.container}>
+        <div className={styles.headerSection}>
+          <div className={styles.headerRow}>
+            <h1 className={styles.pageTitle}>공통코드 관리</h1>
+            <button
+              className={styles.addButton}
               onClick={() => setOpenProductModal(true)}
-              sx={{
-                bgcolor: '#FFB7F2',
-                color: 'white',
-                '&:hover': { bgcolor: '#ff99e6' },
-              }}
             >
-              공통코드 추가
-            </Button>
-          </Box>
-          <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#fff5fc' }}>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    순번
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    코드ID
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    코드명
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    사용유무
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ fontWeight: 'bold', color: '#2A0934' }}
+              <span className={styles.addIcon}>＋</span> 공통코드 추가
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.categoryTable}>
+            <thead>
+              <tr className={styles.tableHeaderRow}>
+                <th className={`${styles.tableHeaderCell} ${styles.count}`}>
+                  순번
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.codeId}`}>
+                  코드ID
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.codeName}`}>
+                  코드명
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.used}`}>
+                  사용유무
+                </th>
+                <th className={styles.tableHeaderCellCenter}>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productCategories.map((category, index) => (
+                <tr key={category.id || index} className={styles.tableRow}>
+                  <td className={styles.tableCell}>{index + 1}</td>
+                  <td className={styles.tableCell}>{category.id}</td>
+                  <td className={styles.tableCell}>{category.name}</td>
+                  <td className={styles.tableCell}>{category.useYn}</td>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellCenter}`}
                   >
-                    관리
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {productCategories.map((category, index) => (
-                  <TableRow key={category.id || index} hover>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{category.id}</TableCell>
-                    <TableCell>{category.name}</TableCell>
-                    <TableCell>{category.useYn}</TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        size="small"
-                        sx={{ color: '#FFB7F2' }}
-                        onClick={() => handleEditClick(category)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        sx={{ color: '#ff8484' }}
-                        onClick={() => handleDeleteClick(category)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                    <button
+                      className={styles.editButton}
+                      onClick={() => handleEditClick(category)}
+                    >
+                      <span className={styles.editIcon}>✎</span>
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => handleDeleteClick(category)}
+                    >
+                      <span className={styles.deleteIcon}>🗑</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         <PageComponent
           page={page}
@@ -220,7 +180,7 @@ const CategoryPage = () => {
           isSuccess={false}
           onConfirm={handleDeleteConfirm}
         />
-      </Container>
+      </div>
     </div>
   );
 };

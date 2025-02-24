@@ -1,41 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../components/layouts/Header';
-import {
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import PageComponent from '../../components/common/PageComponent';
 import AlertModal from '../../components/common/AlertModal';
+import PageComponent from '../../components/common/PageComponent';
 import { useNavigate } from 'react-router-dom';
-import { getApplyList } from '../../api/festivalApi';
-import { accessRegister, refusal } from '../../api/festivalApi';
-
-const initState = {
-  dtoList: [], // product 목록
-  pageNumList: [],
-  pageRequestDTO: null,
-  prev: false,
-  prevPage: 0,
-  nextPage: 0,
-  next: false,
-  totalCount: 0,
-  current: 0,
-};
+import { getApplyList, accessRegister, refusal } from '../../api/festivalApi';
+import styles from '../../styles/AccessPage.module.css';
 
 const AccessPage = () => {
   const [applys, setApplys] = useState([]);
@@ -103,117 +71,81 @@ const AccessPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
-      <Header />
-      <Container
-        maxWidth={false}
-        sx={{
-          mt: 4,
-          mb: 4,
-          px: { xs: 2, sm: 3, md: 4, lg: 6 }, // 반응형 패딩
-          maxWidth: { xl: '1400px' }, // 큰 화면에서 최대 너비
-        }}
-      >
-        <Box sx={{ mb: 4 }}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <Typography
-                variant="h4"
-                sx={{ color: '#2A0934', fontWeight: 'bold' }}
-              >
-                공연등록 관리
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
+    <div className={styles.accessPage}>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>공연등록 관리</h1>
+        </div>
 
-        <Card sx={{ mb: 4, backgroundColor: 'white', borderRadius: 2 }}>
-          <CardContent>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="공연명 검색"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton onClick={fetchApplys}>
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
-                  size="small"
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+        <div className={styles.searchCard}>
+          <div className={styles.searchCardContent}>
+            <input
+              type="text"
+              placeholder="공연명 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+            />
+            <button onClick={fetchApplys} className={styles.searchButton}>
+              <span className={styles.searchIcon}>🔍</span>
+            </button>
+          </div>
+        </div>
 
-        <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#fff5fc' }}>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr className={styles.tableHeaderRow}>
+                <th className={`${styles.tableHeaderCell} ${styles.count}`}>
                   순번
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.name}`}>
                   공연명
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.url}`}>
                   참고영상 URL
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ fontWeight: 'bold', color: '#2A0934' }}
-                >
+                </th>
+                <th className={`${styles.tableHeaderCell} ${styles.manage}`}>
                   관리
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
               {applys.map((apply, index) => (
-                <TableRow key={apply.accessId} hover>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{apply.festivalName}</TableCell>
-                  <TableCell>{apply.festivalMediaLink}</TableCell>
-                  <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: '#00b400',
-                        '&:hover': { backgroundColor: '#1a5c38' },
-                        mr: 1,
-                      }}
+                <tr key={apply.accessId} className={styles.tableRow}>
+                  <td className={styles.tableCell}>{index + 1}</td>
+                  <td className={styles.tableCell}>{apply.festivalName}</td>
+                  <td className={styles.tableCell}>
+                    {apply.festivalMediaLink}
+                  </td>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellCenter}`}
+                  >
+                    <button
+                      className={styles.approveButton}
                       onClick={() => handleAccessClick(apply)}
                     >
                       승인
-                    </Button>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: '#ff0000',
-                        '&:hover': { backgroundColor: '#1a5c38' },
-                        mr: 1,
-                      }}
+                    </button>
+                    <button
+                      className={styles.rejectButton}
                       onClick={() => handleRefusalClick(apply)}
                     >
                       거부
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </tbody>
+          </table>
+        </div>
 
         <PageComponent
           page={page}
           totalPages={totalPages}
           handlePageChange={handlePageChange}
         />
-      </Container>
+      </div>
 
       <AlertModal
         open={accessModalOpen}

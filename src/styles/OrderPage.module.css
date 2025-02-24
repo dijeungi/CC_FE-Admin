@@ -1,0 +1,135 @@
+.orderPage {
+  width: 100%;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.headerSection {
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #2a0934;
+  font-weight: bold;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.searchInputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #fff;
+  border-radius: 4px;
+  outline: none;
+}
+
+.searchButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.searchIcon {
+  display: inline-block;
+}
+
+.selectWrapper {
+  flex: 1;
+}
+
+.selectInput {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHeaderRow {
+  background-color: #fff5fc;
+}
+
+.tableHeaderCell {
+  padding: 0.75rem;
+  font-weight: bold;
+  color: #2a0934;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.tableHeaderCellCenter {
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.tableRow:hover {
+  background-color: #f9f9f9;
+}
+
+.tableCell {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.tableCellCenter {
+  text-align: center;
+}
+
+.refundButton {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.refundButton:hover {
+  background-color: #1a5c38;
+}

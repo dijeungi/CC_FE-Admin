@@ -167,7 +167,7 @@ const ActorPage = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="공연명, 배역, 등장인물 검색"
+                  placeholder="공연명, 등장인물 검색"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   InputProps={{

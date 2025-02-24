@@ -138,7 +138,7 @@ const CategoryPage = () => {
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#fff5fc' }}>
                   <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    ID
+                    순번
                   </TableCell>
                   <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                     코드ID

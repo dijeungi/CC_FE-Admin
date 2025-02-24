@@ -188,7 +188,7 @@ const FestivalPage = () => {
                 공연 관리
               </Typography>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="contained"
                 startIcon={<CloudUploadIcon />}
@@ -213,7 +213,7 @@ const FestivalPage = () => {
               >
                 엑셀 다운로드
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
 
@@ -256,7 +256,7 @@ const FestivalPage = () => {
                   />
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  ID
+                  순번
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   카테고리

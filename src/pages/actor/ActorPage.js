@@ -145,7 +145,7 @@ const ActorPage = () => {
               >
                 배우 등록
               </Button>
-              <Button
+              {/* <Button
                 variant="contained"
                 startIcon={<CloudUploadIcon />}
                 sx={{
@@ -155,7 +155,7 @@ const ActorPage = () => {
                 onClick={() => setShowUploadModal(true)}
               >
                 엑셀 업로드
-              </Button>
+              </Button> */}
             </Grid>
           </Grid>
         </Box>
@@ -189,7 +189,7 @@ const ActorPage = () => {
             <TableHead>
               <TableRow sx={{ backgroundColor: '#fff5fc' }}>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                  ID
+                  순번
                 </TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                   공연명

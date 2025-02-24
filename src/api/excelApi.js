@@ -5,7 +5,7 @@ export const registerProductExcel = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
   const response = await axiosInstance.post(
-    `/product/excel/register`,
+    `/festival/excel/register`,
     formData,
   );
   return response.data;
@@ -14,7 +14,7 @@ export const registerProductExcel = async (file) => {
 // product excel download
 export const downloadProductExcel = async (idList) => {
   const response = await axiosInstance.post(
-    `/product/excel/download`,
+    `/festival/excel/download`,
     { idList: idList },
     {
       responseType: 'blob',
@@ -35,9 +35,6 @@ export const downloadProductExcel = async (idList) => {
 export const registerContentExcel = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await axiosInstance.post(
-    `/content/excel/register`,
-    formData,
-  );
+  const response = await axiosInstance.post(`/actor/excel/register`, formData);
   return response.data;
 };

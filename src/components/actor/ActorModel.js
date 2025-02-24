@@ -13,8 +13,8 @@ import {
   InputLabel,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { getFestivalId } from '../../api/contentApi';
-import { register } from '../../api/contentApi';
+import { getFestivalId } from '../../api/actorApi';
+import { register } from '../../api/actorApi';
 
 const style = {
   position: 'absolute',
@@ -28,7 +28,7 @@ const style = {
   p: 4,
 };
 
-const ContentModal = ({ open, handleClose, title, onSubmit }) => {
+const ActorModal = ({ open, handleClose, title, onSubmit }) => {
   const [festivalId, setFestivalId] = useState('');
   const [actorCharacter, setActorCharacter] = useState('');
   const [actorName, setActorName] = useState('');
@@ -130,4 +130,4 @@ const ContentModal = ({ open, handleClose, title, onSubmit }) => {
   );
 };
 
-export default ContentModal;
+export default ActorModal;

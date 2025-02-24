@@ -27,6 +27,7 @@ import {
 // import { API_SERVER_HOST } from '../../config/apiConfig';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AlertModal from '../../components/common/AlertModal';
+import PageComponent from '../../components/common/PageComponent';
 
 const CategoryPage = () => {
   const [productCategories, setProductCategories] = useState([]);
@@ -34,15 +35,29 @@ const CategoryPage = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [page]);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const fetchCategories = async () => {
+    const params = {
+      page: page,
+      size: 10,
+      sort: 'desc',
+    };
+
     try {
-      const productData = await getProductCategoryList();
-      setProductCategories(productData);
+      const response = await getProductCategoryList(params);
+      setProductCategories(response.dtoList || []);
+      console.log('dtoList: ', response.dtoList);
+      setTotalPages(response.totalPage || 0);
     } catch (error) {
       console.error('공통코드 목록 로딩 실패:', error);
     }
@@ -51,7 +66,7 @@ const CategoryPage = () => {
   const handleProductSubmit = async (formData) => {
     try {
       await registerProductCategory(formData);
-      fetchCategories(); // 목록 새로고침
+      fetchCategories();
     } catch (error) {
       console.error('공통코드 등록 실패:', error);
     }
@@ -67,7 +82,7 @@ const CategoryPage = () => {
       await editProductCategory(formData);
       setEditModalOpen(false);
       setSelectedCategory(null);
-      fetchCategories(); // 목록 새로고침
+      fetchCategories();
     } catch (error) {
       console.error(`공통코드 수정 실패:`, error);
     }
@@ -83,7 +98,7 @@ const CategoryPage = () => {
       await removeProductCategory(selectedCategory.id);
 
       setDeleteModalOpen(false);
-      fetchCategories(); // 목록 새로고침
+      fetchCategories();
     } catch (error) {
       console.error('공통코드 삭제 실패:', error);
     }
@@ -93,7 +108,6 @@ const CategoryPage = () => {
     <div style={{ backgroundColor: '#FFF0FB', minHeight: '100vh' }}>
       <Header />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        {/* 상품 카테고리 섹션 */}
         <Box sx={{ mb: 4 }}>
           <Box
             display="flex"
@@ -124,7 +138,7 @@ const CategoryPage = () => {
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#fff5fc' }}>
                   <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
-                    ID
+                    순번
                   </TableCell>
                   <TableCell sx={{ fontWeight: 'bold', color: '#2A0934' }}>
                     코드ID
@@ -172,6 +186,12 @@ const CategoryPage = () => {
             </Table>
           </TableContainer>
         </Box>
+
+        <PageComponent
+          page={page}
+          totalPages={totalPages}
+          handlePageChange={handlePageChange}
+        />
 
         <CategoryModal
           open={openProductModal}

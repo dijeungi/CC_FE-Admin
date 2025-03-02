@@ -9,6 +9,6 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
-COPY ./nginx/nginx-admin.conf /etc/nginx/conf.d/nginx.conf
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
 
 ENTRYPOINT [ "nginx", "-g", "daemon off;" ]

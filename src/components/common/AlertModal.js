@@ -29,7 +29,7 @@ const AlertModal = ({
     >
       <DialogTitle
         sx={{
-          bgcolor: isSuccess ? '#ffa48c ' : '#FFE0F7',
+          bgcolor: isSuccess ? '#ffa48c ' : '#ffb39f ',
           color: '#2A0934',
           fontWeight: 'bold',
         }}

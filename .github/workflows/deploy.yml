@@ -1,44 +1,48 @@
-name: Deploy React To EC2
+name: Frontend build and deploy
 
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
-  deploy:
+  build_and_push:
     runs-on: ubuntu-latest
-    env:
-      REPOSITORY_NAME: friend-zoo-admin # React 프로젝트의 레포지토리 이름으로 변경하세요
 
     steps:
-      - name: Github Repository 파일 불러오기
-        uses: actions/checkout@v4
-
-      # npm build는 이미 Dockerfile에서 진행해서 제거
-
-      - name: Docker Hub에 로그인하기
-        uses: docker/login-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker 이미지 생성
-        run: docker build --build-arg REACT_APP_API_URL=http://43.200.239.220:8080 --build-arg REACT_APP_FRONT_USER_URL=http://43.200.239.220:3000 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }} .
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Docker Hub에 Docker 이미지 Push하기
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
+      - name: Frontend Dockerfile build
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin .
 
-      - name: SSH로 EC2에 접속하기
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Push Frontend Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin
+
+  deploy:
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker pull and run
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
+          username: ubuntu
+          host: ${{ secrets.EC2_HOST_IP }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            docker stop ${{ env.REPOSITORY_NAME }} || true
-            docker rm ${{ env.REPOSITORY_NAME }} || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest || true
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
-            docker run -d --name ${{ env.REPOSITORY_NAME }} -p 3001:80 ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPOSITORY_NAME }}:latest
+            if [ "$(sudo docker ps -a -q -f name=cc-frontend-admin)" ]; then
+              sudo docker rm -f cc-frontend-admin
+            fi
+            if [ "$(sudo docker images -q ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin)" ]; then
+              sudo docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin
+            fi          
+                
+            sudo docker run -d -p 81:80 --name cc-frontend-admin -v /home/ubuntu/frontend/env-config.js:/usr/share/nginx/html/env-config.js ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin

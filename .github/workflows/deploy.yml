@@ -45,4 +45,4 @@ jobs:
               sudo docker rmi -f ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin
             fi          
                 
-            sudo docker run -d -p 81:80 --name cc-frontend-admin -v /home/ubuntu/frontend/env-config.js:/usr/share/nginx/html/env-config.js ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin
+            sudo docker run -d -p 81:80 --name cc-frontend-admin -v /home/ubuntu/frontend/env-config-admin.js:/usr/share/nginx/html/env-config-admin.js ${{ secrets.DOCKERHUB_USERNAME }}/cc-frontend-admin

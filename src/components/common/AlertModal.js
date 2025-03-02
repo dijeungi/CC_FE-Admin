@@ -29,7 +29,7 @@ const AlertModal = ({
     >
       <DialogTitle
         sx={{
-          bgcolor: isSuccess ? '#FFB7F2' : '#FFE0F7',
+          bgcolor: isSuccess ? '#ffa48c ' : '#FFE0F7',
           color: '#2A0934',
           fontWeight: 'bold',
         }}
@@ -56,11 +56,11 @@ const AlertModal = ({
         <Button
           onClick={onConfirm || onClose}
           sx={{
-            bgcolor: '#FFB7F2',
+            bgcolor: '#ffa48c ',
             color: '#2A0934',
             fontWeight: 'bold',
             '&:hover': {
-              bgcolor: '#FF9BE8',
+              bgcolor: '#ff8364',
             },
           }}
         >

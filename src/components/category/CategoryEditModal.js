@@ -89,7 +89,7 @@ const CategoryModal = ({ open, handleClose, title, category, onSubmit }) => {
             <Button
               type="submit"
               variant="contained"
-              sx={{ bgcolor: '#FFB7F2', '&:hover': { bgcolor: '#ff99e6' } }}
+              sx={{ bgcolor: '#ffa48c', '&:hover': { bgcolor: '#ff8364' } }}
             >
               수정
             </Button>

@@ -52,12 +52,12 @@
 }
 
 .inputField:focus {
-  border-color: #ffb7f2;
+  border-color: #ffa48c;
   outline: none;
 }
 
 .submitButton {
-  background-color: #ffb7f2;
+  background-color: #ff8364;
   color: #2a0934;
   font-weight: bold;
   padding: 0.75rem;
@@ -68,5 +68,5 @@
 }
 
 .submitButton:hover {
-  background-color: #ff9be8;
+  background-color: #ff8364;
 }

@@ -29,7 +29,7 @@
 }
 
 .addButton {
-  background-color: #ffb7f2;
+  background-color: #ffa48c;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -40,7 +40,7 @@
 }
 
 .addButton:hover {
-  background-color: #ff99e6;
+  background-color: #ff8364;
 }
 
 .addIcon {

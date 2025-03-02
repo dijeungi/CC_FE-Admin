@@ -160,7 +160,7 @@ const FestivalPage = () => {
           <table className={styles.table}>
             <thead>
               <tr className={styles.tableHeaderRow}>
-                <th className={styles.tableHeaderCell}>
+                {/* <th className={styles.tableHeaderCell}>
                   <input
                     type="checkbox"
                     checked={
@@ -169,7 +169,7 @@ const FestivalPage = () => {
                     }
                     onChange={handleSelectAll}
                   />
-                </th>
+                </th> */}
                 <th className={`${styles.tableHeaderCell} ${styles.count}`}>
                   순번
                 </th>
@@ -227,13 +227,13 @@ const FestivalPage = () => {
             <tbody>
               {festivals.map((festival, index) => (
                 <tr key={festival.id} className={styles.tableRow}>
-                  <td className={styles.tableCell}>
+                  {/* <td className={styles.tableCell}>
                     <input
                       type="checkbox"
                       checked={selectedFestivals.includes(festival.id)}
                       onChange={() => handleSelectProduct(festival.id)}
                     />
-                  </td>
+                  </td> */}
                   <td className={styles.tableCell}>{index + 1}</td>
                   <td className={styles.tableCell}>{festival.categoryId}</td>
                   <td className={styles.tableCell}>{festival.festivalName}</td>
